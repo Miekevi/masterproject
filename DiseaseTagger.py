@@ -8,7 +8,7 @@ from spacy_cleaner.processing import removers
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
-nlp = spacy.load ("en_core_web_sm")
+nlp = spacy.load("en_core_web_sm")
 
 def main():
     path = 'do_sparql_results(1).csv'
@@ -34,7 +34,7 @@ def main():
     #print(exactmatching(words, diseases))
     #fuzzymatching(words, diseases)
 
-def create_dict (path):
+def create_dict(path):
     data = pd.read_csv(path)
     df = pd.DataFrame(data, columns=['id', 'label', 'parent', 'syn'])
     df['syn'] = df['syn'].replace('', np.nan)
