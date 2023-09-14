@@ -1,4 +1,4 @@
-id,label,parent,syn
+id,label,parent,synonym
 DOID:0001816,angiosarcoma,vascular cancer,hemangiosarcoma
 DOID:175,vascular cancer,vascular disease,Blood vessel tumor
 DOID:175,vascular cancer,vascular disease,Blood vessel tumors
