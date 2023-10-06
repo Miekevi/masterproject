@@ -6,8 +6,7 @@ import spacy
 import spacy_cleaner
 import string
 from spacy_cleaner.processing import removers
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from fuzzywuzzy import fuzz, process
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -16,12 +15,6 @@ def main():
     path = 'do_sparql_results(1).csv'
     new_df = edit_df(path)
     diseases = create_dict(new_df)
-    # example
-    # key = 'SPG14'
-    # if key in diseases.keys():
-    #   print(f"yes, we have found the disease: '{key}'and the disease it points to is '{ diseases.get(key) }'")
-    # else:
-    #   print(f"'{key}' does not exist in this database")
     abstract = "Alzheimer’s disease (AD) is a complex and heterogeneous neurodegenerative disorder, classified as " \
                "either early onset (under 65 years of age), or late onset (over 65 years of age). Three main genes " \
                "are involved in early onset AD: amyloid precursor protein (APP), presenilin 1 (PSEN1), and presenilin " \
@@ -35,7 +28,7 @@ def main():
                "better understanding of the pathomechanisms leading to neurodegeneration."
     words = preprocess(abstract)
     print(exactmatching(words, diseases))
-    # print(fuzzymatching(words, diseases))
+    print(fuzzymatching(words, diseases))
 
 
 def edit_df(path):
@@ -45,7 +38,6 @@ def edit_df(path):
     df['length'] = df.synonym.str.len()
     df = df[df.length > 3]
     df['synonym'] = df['synonym'].apply(normalize_string)
-    #df['label'] = df['label'].apply(normalize_string)
     df.to_csv('edited_data.csv')
     return df
 
@@ -58,11 +50,13 @@ def normalize_string(word):
     rmv2_disease = rmv_disease.replace(" syndrome", "")
     return rmv2_disease
 
+
 def remove_punctuation(input_string):
     # Make a regular expression that matches all punctuation
     regex = re.compile('[%s]' % re.escape(string.punctuation))
     # Use the regex
     return regex.sub('', input_string)
+
 
 def create_dict(df):
     # creating the dictionary based on parents and synonyms, with the key as synonym, so it points to the parent
@@ -84,15 +78,16 @@ def preprocess(abstract):
     tokens = []
     # example text for regex pattern recognition
     # abstract = abstract + "Alzheimer's disease and Parkinson's disease are neurological disorders."
-
-    # pattern = r"\b\w+’s disease\b|\b\w+'s disease\b|\b\w+syndrome|\b\w+cancer"
-    # matches = re.findall(pattern, abstract)
-    # for match in matches:
-    #     match = match.replace("’", "'")
-    #     tokens.append(match)
+    # Regex no longer needed for words like disease and syndrome. I will use it for tumors and cancer as those are specific to bodyparts
+    pattern = r"\b\w+cancer\b|\b\w+tumor\b"
+    matches = re.findall(pattern, abstract)
+    for match in matches:
+        tokens.append(match)
+        abstract.replace(match, "")
 
     for sent in full_text.sents:
         for token in sent:
+            token.lemma_ = token.lemma_.lower()
             tokens.append(token.lemma_)
     return tokens
 
@@ -101,26 +96,22 @@ def exactmatching(words, diseases):
     diseaseslist = []
     for word in words:
         if word in diseases.keys():
+            print(word)
             diseaseslist.append(diseases.get(word))
-            print(diseases.get(word))
     return diseaseslist
 
 
 def fuzzymatching(words, diseases):
     # Using FuzzyWuzzy for the fuzzy matching, which uses Levenshtein's distance
-    # it seems to also register the token 's and diseases as a match
-    MIN_MATCH_SCORE = 99
-    guessed_word = []
+    threshold = 90
+    diseaseslist = []
     for word in words:
-        for key, value in diseases.items():  # dict.items used to access the (key-value) pair of dictionary
-            if (fuzz.token_set_ratio(word, key) >= MIN_MATCH_SCORE):  # check the condition for each value,
-                # if it's satisfied create a dictionary & append it to result list
-                print(word, key)
-                dict = {}
-                dict[key] = value
-                guessed_word.append(dict)
+        for key in diseases.keys():  # dict.items used to access the (key-value) pair of dictionary
+            similarityscore = fuzz.ratio(word,key)
+            if similarityscore >= threshold:  # check the condition for each value,
+                diseaseslist.append(diseases.get(key))
 
-    print(guessed_word)
+    return diseaseslist
 
 
 main()
