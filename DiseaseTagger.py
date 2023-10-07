@@ -12,23 +12,19 @@ nlp = spacy.load("en_core_web_sm")
 
 
 def main():
-    path = 'do_sparql_results(1).csv'
-    new_df = edit_df(path)
-    diseases = create_dict(new_df)
-    abstract = "Alzheimer’s disease (AD) is a complex and heterogeneous neurodegenerative disorder, classified as " \
-               "either early onset (under 65 years of age), or late onset (over 65 years of age). Three main genes " \
-               "are involved in early onset AD: amyloid precursor protein (APP), presenilin 1 (PSEN1), and presenilin " \
-               "2 (PSEN2). The apolipoprotein E (APOE) E4 allele has been found to be a main risk factor for " \
-               "late-onset Alzheimer’s disease. Additionally, genome-wide association studies (GWASs) have identified " \
-               "several genes that might be potential risk factors for AD, including clusterin (CLU), complement " \
-               "receptor 1 (CR1), phosphatidylinositol binding clathrin assembly protein (PICALM), " \
-               "and sortilin-related receptor (SORL1). Recent studies have discovered additional novel genes that " \
-               "might be involved in late-onset AD, such as triggering receptor expressed on myeloid cells 2 (TREM2) " \
-               "and cluster of differentiation 33 (CD33). Identification of new AD-related genes is important for " \
-               "better understanding of the pathomechanisms leading to neurodegeneration."
-    words = preprocess(abstract)
-    print(exactmatching(words, diseases))
-    print(fuzzymatching(words, diseases))
+    #path = 'do_sparql_results(1).csv'
+    #new_df = edit_df(path)
+    diseases = create_dict(pd.read_csv("edited_data.csv", header=0))
+    df = pd.read_csv('NCBIdevelopset_corpus.csv', sep=';', header=0)
+    abstracts = df[df["TYPE"] == 'a']
+    for abstract in abstracts["TEXT"]:
+        words = preprocess(abstract)
+        print(exactmatching(words, diseases))
+        print(fuzzymatching(words, diseases))
+    #abstract = "The common hereditary forms of breast cancer have been largely attributed to the inheritance of mutations in the BRCA1 or BRCA2 genes. However, it is not yet clear what proportion of hereditary breast cancer is explained by BRCA1 and BRCA2 or by some other unidentified susceptibility gene (s). We describe the proportion of hereditary breast cancer explained by BRCA1 or BRCA2 in a sample of North American hereditary breast cancers and assess the evidence for additional susceptibility genes that may confer hereditary breast or ovarian cancer risk. Twenty-three families were identified through two high-risk breast cancer research programs. Genetic analysis was undertaken to establish linkage between the breast or ovarian cancer cases and markers on chromosomes 17q (BRCA1) and 13q (BRCA2). Mutation analysis in the BRCA1 and BRCA2 genes was also undertaken in all families. The pattern of hereditary cancer in 14 (61%) of the 23 families studied was attributed to BRCA1 by a combination of linkage and mutation analyses. No families were attributed to BRCA2. Five families (22%) provided evidence against linkage to both BRCA1 and BRCA2. No BRCA1 or BRCA2 mutations were detected in these five families. The BRCA1 or BRCA2 status of four families (17%) could not be determined. BRCA1 and BRCA2 probably explain the majority of hereditary breast cancer that exists in the North American population. However, one or more additional genes may yet be found that explain some proportion of hereditary breast cancer."
+    #words = preprocess(abstract)
+    #print(exactmatching(words, diseases))
+    #print(fuzzymatching(words, diseases))
 
 
 def edit_df(path):
@@ -77,14 +73,14 @@ def preprocess(abstract):
     full_text = nlp(abstract)
     tokens = []
     # example text for regex pattern recognition
-    # abstract = abstract + "Alzheimer's disease and Parkinson's disease are neurological disorders."
+    #abstract = abstract + "breastcancer"
     # Regex no longer needed for words like disease and syndrome. I will use it for tumors and cancer as those are specific to bodyparts
-    pattern = r"\b\w+cancer\b|\b\w+tumor\b"
+    pattern = r"\b\w+\s?cancer\b|\b\w+\s?tumor\b|\b\w+\s?cancers\b|\b\w+\s?tumors\b"
     matches = re.findall(pattern, abstract)
+    print(matches)
     for match in matches:
         tokens.append(match)
         abstract.replace(match, "")
-
     for sent in full_text.sents:
         for token in sent:
             token.lemma_ = token.lemma_.lower()
@@ -103,7 +99,7 @@ def exactmatching(words, diseases):
 
 def fuzzymatching(words, diseases):
     # Using FuzzyWuzzy for the fuzzy matching, which uses Levenshtein's distance
-    threshold = 90
+    threshold = 95
     diseaseslist = []
     for word in words:
         for key in diseases.keys():  # dict.items used to access the (key-value) pair of dictionary

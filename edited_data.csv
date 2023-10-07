@@ -6046,7 +6046,7 @@
 7642,DOID:0080519,PAPA syndrome,autosomal dominant disease,pyogenic arthritis pyoderma gangrenosum and acne,49.0
 7643,DOID:0080519,PAPA syndrome,syndrome,pyogenic arthritis pyoderma gangrenosum and acne,49.0
 7644,DOID:0080520,Tn polyagglutination syndrome,hematopoietic system disease,galactosyltransferase deficiency,32.0
-7645,DOID:74,hematopoietic system disease,disease of anatomical entity,blood,13.0
+7645,DOID:74,hematopoietic system disease,disease of anatomical entity,blood disease,13.0
 7646,DOID:74,hematopoietic system disease,disease of anatomical entity,blood dyscrasia,15.0
 7647,DOID:74,hematopoietic system disease,disease of anatomical entity,disease of the blood and bloodforming organs,45.0
 7648,DOID:74,hematopoietic system disease,disease of anatomical entity,hematological,21.0
@@ -21102,6 +21102,7 @@
 24787,DOID:1993,rectum cancer,colorectal cancer,malignant neoplasm of rectum,28.0
 24788,DOID:1993,rectum cancer,colorectal cancer,malignant rectum tumor,22.0
 24789,DOID:1993,rectum cancer,colorectal cancer,malignant tumor of rectum,25.0
+24790,DOID:1993,rectum cancer,colorectal tumor,rectal cancer,13.0
 24790,DOID:1993,rectum cancer,colorectal cancer,rectal cancer,13.0
 24791,DOID:1992,rectum malignant melanoma,melanoma,malignant melanoma of rectum,28.0
 24792,DOID:1992,rectum malignant melanoma,melanoma,melanoma of rectum,18.0
