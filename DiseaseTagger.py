@@ -1,3 +1,4 @@
+import csv
 import re
 import unidecode as ud
 import pandas as pd
@@ -17,14 +18,20 @@ def main():
     diseases = create_dict(pd.read_csv("edited_data.csv", header=0))
     df = pd.read_csv('NCBIdevelopset_corpus.csv', sep=';', header=0)
     abstracts = df[df["TYPE"] == 'a']
+    exact=[]
+    fuzzy=[]
+    abstract1=[]
     for abstract in abstracts["TEXT"]:
         words = preprocess(abstract)
-        print(exactmatching(words, diseases))
-        print(fuzzymatching(words, diseases))
-    #abstract = "The common hereditary forms of breast cancer have been largely attributed to the inheritance of mutations in the BRCA1 or BRCA2 genes. However, it is not yet clear what proportion of hereditary breast cancer is explained by BRCA1 and BRCA2 or by some other unidentified susceptibility gene (s). We describe the proportion of hereditary breast cancer explained by BRCA1 or BRCA2 in a sample of North American hereditary breast cancers and assess the evidence for additional susceptibility genes that may confer hereditary breast or ovarian cancer risk. Twenty-three families were identified through two high-risk breast cancer research programs. Genetic analysis was undertaken to establish linkage between the breast or ovarian cancer cases and markers on chromosomes 17q (BRCA1) and 13q (BRCA2). Mutation analysis in the BRCA1 and BRCA2 genes was also undertaken in all families. The pattern of hereditary cancer in 14 (61%) of the 23 families studied was attributed to BRCA1 by a combination of linkage and mutation analyses. No families were attributed to BRCA2. Five families (22%) provided evidence against linkage to both BRCA1 and BRCA2. No BRCA1 or BRCA2 mutations were detected in these five families. The BRCA1 or BRCA2 status of four families (17%) could not be determined. BRCA1 and BRCA2 probably explain the majority of hereditary breast cancer that exists in the North American population. However, one or more additional genes may yet be found that explain some proportion of hereditary breast cancer."
-    #words = preprocess(abstract)
-    #print(exactmatching(words, diseases))
-    #print(fuzzymatching(words, diseases))
+        abstract1.append(abstract)
+        exact.append(exactmatching(words, diseases))
+        #print(fuzzymatching(words, diseases))
+
+    #new_df = pd.DataFrame(list(zip(*[abstract1, exact]))).add_prefix('Col')
+    #new_df.to_csv('outdiseases.csv', index=False)
+    #print(new_df)
+    sdisease = df
+
 
 
 def edit_df(path):
@@ -77,7 +84,7 @@ def preprocess(abstract):
     # Regex no longer needed for words like disease and syndrome. I will use it for tumors and cancer as those are specific to bodyparts
     pattern = r"\b\w+\s?cancer\b|\b\w+\s?tumor\b|\b\w+\s?cancers\b|\b\w+\s?tumors\b"
     matches = re.findall(pattern, abstract)
-    print(matches)
+    #print(matches)
     for match in matches:
         tokens.append(match)
         abstract.replace(match, "")

@@ -29,7 +29,7 @@ ID;TYPE;TEXT;DISEASE;ENTITY;NUMBER;NUMBER2;NUMBER3;NUMBER4
 8755645;1168;1171;FED;SpecificDisease;D007863;;;
 ;;;;;;;;
 8751855;t;Genetic heterogeneity in hereditary breast cancer: role of BRCA1 and BRCA2.;;;;;;
-8751855;a;j+8751855;25;49;hereditary breast cancer;SpecificDisease;D061325;;;
+8751855;a;j+8751855;25;49;hereditary breast cancer;SpecificDisease;D061325;
 8751855;107;120;breast cancer;SpecificDisease;D001943;;;
 8751855;259;283;hereditary breast cancer;SpecificDisease;D061325;;;
 8751855;401;425;hereditary breast cancer;SpecificDisease;D061325;;;
