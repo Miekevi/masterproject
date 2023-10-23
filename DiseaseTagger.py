@@ -15,22 +15,24 @@ nlp = spacy.load("en_core_web_sm")
 def main():
     #path = 'do_sparql_results(1).csv'
     #new_df = edit_df(path)
-    diseases = create_dict(pd.read_csv("edited_data.csv", header=0))
-    df = pd.read_csv('NCBIdevelopset_corpus.csv', sep=';', header=0)
+    diseases = create_dict(pd.read_csv("Data/edited_data.csv", header=0))
+    df = pd.read_csv('Data/NCBIdevelopset_corpus.csv', sep=';', header=0)
     abstracts = df[df["TYPE"] == 'a']
     exact=[]
     fuzzy=[]
     abstract1=[]
+    total = 0
     for abstract in abstracts["TEXT"]:
         words = preprocess(abstract)
-        abstract1.append(abstract)
-        exact.append(exactmatching(words, diseases))
-        #print(fuzzymatching(words, diseases))
+        #abstract1.append(abstract)
+        total = len(words) + total
+        #exact.append(exactmatching(words, diseases))
+        #fuzzy.append(fuzzymatching(words, diseases))
 
-    #new_df = pd.DataFrame(list(zip(*[abstract1, exact]))).add_prefix('Col')
+    #new_df = pd.DataFrame(list(zip(*[abstract1, exact, fuzzy]))).add_prefix('Col')
     #new_df.to_csv('outdiseases.csv', index=False)
-    #print(new_df)
-    sdisease = df
+    print(total)
+
 
 
 
@@ -99,7 +101,7 @@ def exactmatching(words, diseases):
     diseaseslist = []
     for word in words:
         if word in diseases.keys():
-            print(word)
+            #print(word)
             diseaseslist.append(diseases.get(word))
     return diseaseslist
 
