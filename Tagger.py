@@ -19,12 +19,13 @@ def main():
     #new_df = edit_disease_df(path)
     #edit_gene_df('Data/Gene/Pmidlist.Test.txt')
 
-    diseases = create_dict(pd.read_csv("Data/Disease/edited_data.csv", header=0))
-    #genes=create_dict(pd.read_csv"Data/Gene/edited_data.csv",header=0)
+    diseases = create_disease_dict(pd.read_csv("Data/Disease/edited_data.csv", header=0))
+    #genes=create_gene_dict(pd.read_csv"Data/Gene/gene2go",header=0,columns=['#tax_id', 'GeneID','GO_ID','Evidence','Qualifier', 'GO_term PubMed', 'Category'])
 
     df = pd.read_csv('Data/Disease/NCBIdevelopset_corpus.csv', sep=';', header=0)
     #df2=pd.read_csv('Data/Gene/outgenes.csv',header=True)
 
+    #for both the disease and gene tagger perform preprocessing over text and only use exact matching for the genetagger
     abstracts = df[df["TYPE"] == 'a']
     exact=[]
     fuzzy=[]
@@ -83,6 +84,13 @@ def remove_punctuation(input_string):
     # Use the regex
     return regex.sub('', input_string)
 
+def create_gene_dict(df):
+    # creating the dictionary based on parents and synonyms, with the key as synonym, so it points to the parent
+    df.groupby('Evidence').agg({'GeneID': lambda x: ' '.join(x.dropna())})
+    df.drop_duplicates(subset=['Evidence', 'GeneID'], inplace=True)
+    genes = df.groupby('Evidence')['GeneID'].agg(list).to_dict()
+
+    return genes
 
 def create_disease_dict(df):
     # creating the dictionary based on parents and synonyms, with the key as synonym, so it points to the parent
