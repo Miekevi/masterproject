@@ -19,23 +19,34 @@ def main():
     #new_df = edit_disease_df(path)
     #edit_gene_df('Data/Gene/Pmidlist.Test.txt')
 
+    #Create the dictionaries
     diseases = create_disease_dict(pd.read_csv("Data/Disease/edited_data.csv", header=0))
-    #genes=create_gene_dict(pd.read_csv"Data/Gene/gene2go",header=0,columns=['#tax_id', 'GeneID','GO_ID','Evidence','Qualifier', 'GO_term PubMed', 'Category'])
+    genes = create_gene_dict(pd.read_csv"Data/Gene/gene2go",header=0,columns=['#tax_id', 'GeneID','GO_ID','Evidence','Qualifier', 'GO_term PubMed', 'Category'])
 
+    #create the test data
     df = pd.read_csv('Data/Disease/NCBIdevelopset_corpus.csv', sep=';', header=0)
-    #df2=pd.read_csv('Data/Gene/outgenes.csv',header=True)
+    df2=pd.read_csv('Data/Gene/outgenes.csv',header=0)
 
     #for both the disease and gene tagger perform preprocessing over text and only use exact matching for the genetagger
-    abstracts = df[df["TYPE"] == 'a']
+    abstracts_diseases = df[df["TYPE"] == 'a']
+    abstracts_genes = df2.drop_duplicates('ID')
     exact=[]
     fuzzy=[]
     total = 0
-    for abstract in abstracts["TEXT"]:
+    for abstract in abstracts_diseases["TEXT"]:
         words = preprocess(abstract)
         #abstract1.append(abstract)
         total = len(words) + total
         exact.append(exactmatching(words, diseases))
         fuzzy.append(fuzzymatching(words, diseases))
+
+    exact=[]
+    total = 0
+    for abstract in abstracts_genes["TEXT"]:
+        words = preprocess(abstract)
+        total = len(words) + total
+        exact.append(exactmatching(words, genes))
+
 
 
     #new_df = pd.DataFrame(list(zip(*[abstract1, exact, fuzzy]))).add_prefix('Col')
@@ -88,8 +99,8 @@ def create_gene_dict(df):
     # creating the dictionary based on parents and synonyms, with the key as synonym, so it points to the parent
     df.groupby('Evidence').agg({'GeneID': lambda x: ' '.join(x.dropna())})
     df.drop_duplicates(subset=['Evidence', 'GeneID'], inplace=True)
+    df['Evidence'] = df['Evidence'].apply(normalize_string)
     genes = df.groupby('Evidence')['GeneID'].agg(list).to_dict()
-
     return genes
 
 def create_disease_dict(df):
