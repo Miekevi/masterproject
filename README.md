@@ -7,7 +7,7 @@ The present study will compare rule-based methods and LLM-based methods for dise
 
 **Explanation of the code**
 
-The dictionary and gene tagger make use of information from Hetio.net. The data regarding the diseases can be found at Data/Disease/do_sparql_results(1).csv.  The gene2go file for the data regarding the genes was too large to commit through git. However, it can be found through https://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/ 
+The dictionary and gene tagger make use of information from Hetio.net. The data regarding the diseases can be found at Data/Disease/do_sparql_results(1).csv.  The gene2go file for the data regarding the genes was too large to commit through git. However, it can be found through [https://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/ ](https://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/)
 
 The two taggers are described in Tagger.py. The dataframes needed to be edited to fit the function. If one wants to make use of different data for this test, make sure the format is the same as the currently used dataframes. The Disease Tagger uses both exact matching and fuzzy matching. The Gene Tagger only makes use of exact matching.
 
